@@ -31,6 +31,7 @@
           </div>
           <button class="profile__add-button" type="button"></button>
         </section>
+
         <section class="places page__section">
           <ul class="places__list"></ul>
         </section>
@@ -38,6 +39,7 @@
       <footer class="footer page__section">
         <p class="footer__copyright">© 2021 Mesto Russia</p>
       </footer>
+
       <div class="popup popup_type_edit">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
@@ -63,6 +65,7 @@
           </form>
         </div>
       </div>
+
       <div class="popup popup_type_new-card">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
@@ -76,7 +79,7 @@
               required
             />
             <input
-              type="url"
+              type="text"
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"
@@ -88,14 +91,16 @@
           </form>
         </div>
       </div>
+
       <div class="popup popup_type_image">
         <div class="popup__content popup__content_content_image">
-          <button type="button" class="popup__close"></button>
+          <button type="button" class=" "></button>
           <img src="" alt="" class="popup__image" />
           <p class="popup__caption"></p>
         </div>
       </div>
     </div>
+
     <template id="card-template">
       <li class="places__item card">
         <img class="card__image" src="" alt="" />
