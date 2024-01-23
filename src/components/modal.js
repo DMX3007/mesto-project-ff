@@ -1,9 +1,11 @@
 export const openModal = (domElement) => {
   domElement.classList.add("popup_is-opened");
+  domElement.addEventListener("click", (e) => {
+    // close on outer modal click
+    if (e.target === domElement) closeModal(domElement);
+  });
 };
 
 export const closeModal = (domElement) => {
-  console.log("call closemodal");
-  domElement.classList.add("popup_is-animated");
   domElement.classList.remove("popup_is-opened");
 };

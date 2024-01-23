@@ -13,17 +13,18 @@
     <div class="page__content">
       <header class="header page__section">
         <img
-          src="../images/logo.svg"
+          src="<%=require('../images/logo.svg')%>"
           alt="Логотип проекта масто"
           class="logo header__logo"
         />
       </header>
       <main class="content">
         <section class="profile page__section">
-          <div
+          <img
             class="profile__image"
-            style="background-image: url('../images/avatar.jpg')"
-          ></div>
+            src="<%=require('../images/avatar.jpg')%>"
+            alt="Аватар профиля"
+          />
           <div class="profile__info">
             <h1 class="profile__title">Жак-Ив Кусто</h1>
             <button class="profile__edit-button" type="button"></button>
@@ -40,7 +41,7 @@
         <p class="footer__copyright">© 2021 Mesto Russia</p>
       </footer>
 
-      <div class="popup popup_type_edit">
+      <div class="popup popup_is-animated popup_type_edit">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Редактировать профиль</h3>
@@ -66,7 +67,7 @@
         </div>
       </div>
 
-      <div class="popup popup_type_new-card">
+      <div class="popup popup_is-animated popup_type_new-card">
         <div class="popup__content">
           <button type="button" class="popup__close"></button>
           <h3 class="popup__title">Новое место</h3>
@@ -92,9 +93,9 @@
         </div>
       </div>
 
-      <div class="popup popup_type_image">
+      <div class="popup popup_is-animated popup_type_image">
         <div class="popup__content popup__content_content_image">
-          <button type="button" class=" "></button>
+          <button type="button" class="popup__close"></button>
           <img src="" alt="" class="popup__image" />
           <p class="popup__caption"></p>
         </div>

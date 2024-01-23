@@ -1,20 +1,22 @@
 import { initialCards } from "./components/cards";
 import { removeCard, createCard } from "./components/card";
-import "../pages/index.css";
 import { openModal, closeModal } from "./components/modal";
+import "../pages/index.css";
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
 
-// const popus = document.querySelectorAll(".popup");
 const popupEditProfile = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
-const popupImage = document.querySelector(".popup_type_image");
+const popupImageBlock = document.querySelector(".popup_type_image");
 
 const popupCloseButtons = document.querySelectorAll(".popup__close");
 
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
+
+const addCardForm = document.forms["new-place"];
+const profileForm = document.forms["edit-profile"];
 
 function handleCloseButtonPressed() {
   const underlay = this.parentNode.parentNode;
@@ -31,7 +33,6 @@ function addModalOpenerListener(button, popup) {
     openModal(popup);
   });
   document.addEventListener("keydown", handleEscPressed);
-  handleClickOutsideModal();
 }
 
 function handleEscPressed(e) {
@@ -41,25 +42,17 @@ function handleEscPressed(e) {
   }
 }
 
-document.addEventListener("click", (e) => {
-  console.log(e.target);
-});
-
-const handleClickOutsideModal = () => {
-  // document.querySelector(".popup_is-opened").addEventListener("click", (e) => {
-  //   const opened = document.querySelector(".popup_is-opened");
-  //   if (e.target.className.includes(".popup__content")) {
-  //     closeModal(opened);
-  //   }
-  // });
-};
-
 function handleLikeButtonClicked(e) {
   e.target.classList.toggle("card__like-button_is-active");
 }
 
 function handleImageClick(e) {
-  openModal(popupImage);
+  const popupImage = document.querySelector(".popup__image");
+  popupImage.setAttribute("src", e.target.getAttribute("src"));
+  popupImage.setAttribute("alt", e.target.getAttribute("alt"));
+  document.querySelector(".popup__caption").textContent =
+    e.target.getAttribute("alt");
+  openModal(popupImageBlock);
 }
 
 const renderCard = (template, content) => {
@@ -73,29 +66,21 @@ const renderCard = (template, content) => {
   cardsList.prepend(card);
 };
 
-const profileForm = document.forms["edit-profile"];
-
-const nameInput = profileForm.children.name;
-const jobInput = profileForm.children.description;
-
 function handleFormSubmit(e) {
   e.preventDefault();
 
-  const name = nameInput.value;
-  const job = jobInput.value;
-
-  document.querySelector(".profile__title").textContent = name;
-  document.querySelector(".profile__description").textContent = job;
+  document.querySelector(".profile__title").textContent =
+    profileForm.children.name;
+  document.querySelector(".profile__description").textContent =
+    profileForm.children.description;
 
   profileForm.reset();
   closeModal(popupEditProfile);
 }
 profileForm.addEventListener("submit", handleFormSubmit);
 
-const addCardForm = document.forms["new-place"];
 addCardForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
   const placeInput = addCardForm.children[`place-name`].value;
   const linkInput = addCardForm.children.link.value;
 
