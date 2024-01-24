@@ -30,7 +30,11 @@
             <button class="profile__edit-button" type="button"></button>
             <p class="profile__description">Исследователь океана</p>
           </div>
-          <button class="profile__add-button" type="button"></button>
+          <button
+            class="profile__add-button"
+            aria-label="кнопка редактирования профиля"
+            type="button"
+          ></button>
         </section>
 
         <section class="places page__section">
@@ -80,7 +84,7 @@
               required
             />
             <input
-              type="text"
+              type="url"
               name="link"
               class="popup__input popup__input_type_url"
               placeholder="Ссылка на картинку"

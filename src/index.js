@@ -1,6 +1,10 @@
 import { initialCards } from "./components/cards";
-import { removeCard, createCard } from "./components/card";
-import { openModal, closeModal } from "./components/modal";
+import {
+  removeCard,
+  createCard,
+  handleLikeButtonClicked,
+} from "./components/card";
+import { openModal, closeModal, handleEscPressed } from "./components/modal";
 import "../pages/index.css";
 
 const cardTemplate = document.querySelector("#card-template").content;
@@ -19,9 +23,8 @@ const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
 
 function handleCloseButtonPressed() {
-  const underlay = this.parentNode.parentNode;
+  const underlay = this.closest(".popup");
   closeModal(underlay);
-  document.removeEventListener("keydown", handleEscPressed);
 }
 
 popupCloseButtons.forEach((button) => {
@@ -32,18 +35,6 @@ function addModalOpenerListener(button, popup) {
   button.addEventListener("click", (e) => {
     openModal(popup);
   });
-  document.addEventListener("keydown", handleEscPressed);
-}
-
-function handleEscPressed(e) {
-  const opened = document.querySelector(".popup_is-opened");
-  if (e.key === "Escape" && opened) {
-    closeModal(opened);
-  }
-}
-
-function handleLikeButtonClicked(e) {
-  e.target.classList.toggle("card__like-button_is-active");
 }
 
 function handleImageClick(e) {
@@ -66,25 +57,25 @@ const renderCard = (template, content) => {
   cardsList.prepend(card);
 };
 
-function handleFormSubmit(e) {
+function handleProfileFormSubmit(e) {
   e.preventDefault();
 
   document.querySelector(".profile__title").textContent =
-    profileForm.children.name;
+    profileForm.elements.name.value;
   document.querySelector(".profile__description").textContent =
-    profileForm.children.description;
+    profileForm.elements.description.value;
 
   profileForm.reset();
   closeModal(popupEditProfile);
 }
-profileForm.addEventListener("submit", handleFormSubmit);
+profileForm.addEventListener("submit", handleProfileFormSubmit);
 
 addCardForm.addEventListener("submit", (e) => {
   e.preventDefault();
-  const placeInput = addCardForm.children[`place-name`].value;
-  const linkInput = addCardForm.children.link.value;
+  const placeInput = addCardForm.elements[`place-name`].value;
+  const linkInput = addCardForm.elements.link.value;
 
-  initialCards.unshift({ name: placeInput, link: linkInput });
+  initialCards.push({ name: placeInput, link: linkInput });
   renderCard(cardTemplate, initialCards[0]);
   addCardForm.reset();
   closeModal(popupNewCard);

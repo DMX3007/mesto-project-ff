@@ -2,6 +2,10 @@ export const removeCard = (card) => {
   card.remove();
 };
 
+export function handleLikeButtonClicked(e) {
+  e.target.classList.toggle("card__like-button_is-active");
+}
+
 export const createCard = (
   template,
   cardContent,
@@ -25,11 +29,11 @@ export const createCard = (
 
   cardElement
     .querySelector(".card__like-button")
-    .addEventListener("click", (e) => likeCardFn(e));
+    .addEventListener("click", likeCardFn);
 
   cardElement
     .querySelector(".card__image")
-    .addEventListener("click", (e) => clickCardFn(e));
+    .addEventListener("click", clickCardFn);
 
   cardElement
     .querySelector(".card__description")
