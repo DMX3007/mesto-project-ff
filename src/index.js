@@ -1,10 +1,15 @@
-import { initialCards } from "./components/cards";
+// import { initialCards } from "./components/cards";
 import {
   removeCard,
   createCard,
   handleLikeButtonClicked,
 } from "./components/card";
 import { openModal, closeModal, handleEscPressed } from "./components/modal";
+import {
+  initializeValidation,
+  validateInput,
+  checkAllFormValidity,
+} from "./components/validation";
 import "../pages/index.css";
 
 const cardTemplate = document.querySelector("#card-template").content;
@@ -19,14 +24,41 @@ const popupCloseButtons = document.querySelectorAll(".popup__close");
 const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
 
+const profileTitle = document.querySelector(".profile__title");
+const profileDesctiption = document.querySelector(".profile__description");
+const profileAvatar = document.querySelector(".profile__image");
 const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
+const fetchData = async (endPoint) => {
+  const response = await fetch(
+    `https://nomoreparties.co/v1/cohort-magistr-2/${endPoint}`,
+    {
+      headers: {
+        authorization: "26c1ae51-9801-4bd2-af04-f2b12b773d26",
+      },
+    }
+  );
+  const data = await response.json();
+  return data;
+};
 
+function removeFormEventListeners(popup) {
+  const form = popup.querySelector(".popup__form");
+  if (!form) return; // If there's no form in the popup, exit the function
+  form.removeEventListener("input", checkAllFormValidity);
+
+  let inputs = Array.from(form.elements).filter(
+    (input) => input.type !== "submit"
+  );
+  inputs.forEach((input) => {
+    input.removeEventListener("input", validateInput);
+  });
+}
 function handleCloseButtonPressed() {
   const underlay = this.closest(".popup");
   closeModal(underlay);
+  removeFormEventListeners(underlay);
 }
-
 popupCloseButtons.forEach((button) => {
   button.addEventListener("click", handleCloseButtonPressed);
 });
@@ -34,6 +66,7 @@ popupCloseButtons.forEach((button) => {
 function addModalOpenerListener(button, popup) {
   button.addEventListener("click", (e) => {
     openModal(popup);
+    initializeValidation();
   });
 }
 
@@ -54,7 +87,7 @@ const renderCard = (template, content) => {
     handleLikeButtonClicked,
     handleImageClick
   );
-  cardsList.prepend(card);
+  cardsList.append(card);
 };
 
 function handleProfileFormSubmit(e) {
@@ -81,6 +114,12 @@ addCardForm.addEventListener("submit", (e) => {
   closeModal(popupNewCard);
 });
 
+const { name, about, avatar } = await fetchData("users/me");
+profileTitle.textContent = name;
+profileDesctiption.textContent = about;
+profileAvatar.src = avatar;
+
+const initialCards = await fetchData("cards");
 initialCards.forEach((cardContent) => renderCard(cardTemplate, cardContent));
 addModalOpenerListener(profileEditButton, popupEditProfile);
 addModalOpenerListener(profileAddButton, popupNewCard);
