@@ -29,6 +29,7 @@ const profileDesctiption = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
 const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
+
 const fetchData = async (endPoint) => {
   const response = await fetch(
     `https://nomoreparties.co/v1/cohort-magistr-2/${endPoint}`,
@@ -41,6 +42,12 @@ const fetchData = async (endPoint) => {
   const data = await response.json();
   return data;
 };
+
+window.addEventListener('load', function() {
+  document.body.style.visibility = 'visible';
+  document.body.style.opacity = '1';
+  document.body.style.transition = 'opacity 0.3s';
+});
 
 function removeFormEventListeners(popup) {
   const form = popup.querySelector(".popup__form");
@@ -67,6 +74,14 @@ function addModalOpenerListener(button, popup) {
   button.addEventListener("click", (e) => {
     openModal(popup);
     initializeValidation();
+    if (popup === popupEditProfile) {
+      // Assuming the input fields have IDs `profile-name-input` and `profile-description-input`
+      const nameInput = popup.querySelector(".popup__input_type_name");
+      const descriptionInput = popup.querySelector(".popup__input_type_description");
+      // Set the value of the input fields to the current values
+      nameInput.value = profileTitle.textContent;
+      descriptionInput.value = profileDesctiption.textContent;
+    }
   });
 }
 

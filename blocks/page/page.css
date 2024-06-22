@@ -3,4 +3,7 @@
 
 .page {
   background: #000;
+  /* Скрываем body до загрузки */
+  visibility: hidden;
+  opacity: 0;
 }
