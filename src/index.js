@@ -1,4 +1,3 @@
-// import { initialCards } from "./components/cards";
 import {
   removeCard,
   createCard,

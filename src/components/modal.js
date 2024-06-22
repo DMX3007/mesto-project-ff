@@ -1,4 +1,7 @@
+import { clearValidationErrors} from './validation';
+
 export const openModal = (domElement) => {
+  clearValidationErrors(domElement);
   domElement.classList.add("popup_is-opened");
   domElement.addEventListener("click", (e) => {
     // close on outer modal click

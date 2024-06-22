@@ -7,6 +7,14 @@ export function validateInput() {
   }
 }
 
+export function clearValidationErrors(popup) {
+  const errorMessages = popup.querySelectorAll('.popup__error');
+
+  errorMessages.forEach(error => {
+    error.textContent = '';
+  });
+}
+
 function showErrorMessage(input) {
   const errorMessage = input.parentNode.querySelector(
     `.popup__${input.name}-error`
