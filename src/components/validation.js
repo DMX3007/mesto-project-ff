@@ -30,7 +30,9 @@ function hideErrorMessage(input) {
 }
 
 export function checkAllFormValidity(inputs, submitButton) {
-  if (inputs.every((input) => input.validity.valid)) {
+  if (inputs.every((input) => 
+    input.validity.valid === true
+  )) {
     submitButton.disabled = false;
   } else {
     submitButton.disabled = true;
@@ -54,7 +56,6 @@ export function initializeValidation() {
       submitButton = input;
     }
   }
-
   form[0].addEventListener("input", () =>
     checkAllFormValidity(inputs, submitButton)
   );

@@ -77,31 +77,34 @@
 
       <div class="popup popup_is-animated popup_type_new-card">
         <div class="popup__content">
-          <button type="button" class="popup__close"></button>
-          <h3 class="popup__title">Новое место</h3>
-          <form novalidate class="popup__form" name="new-place">
-            <input
-              type="text"
-              name="place-name"
-              class="popup__input popup__input_type_card-name"
-              placeholder="Название"
-              required
-            />
-            <p class="popup__error popup__place-name-error"></p>
-            <input
-              type="url"
-              name="link"
-              class="popup__input popup__input_type_url"
-              placeholder="Ссылка на картинку"
-              required
-            />
-            <p class="popup__error popup__link-error"></p>
-            <button type="submit" class="button popup__button">
-              Сохранить
-            </button>
-          </form>
+            <button type="button" class="popup__close"></button>
+            <h3 class="popup__title">Новое место</h3>
+            <form novalidate class="popup__form" name="new-place">
+                <input
+                    type="text"
+                    name="place-name"
+                    class="popup__input popup__input_type_card-name"
+                    placeholder="Название"
+                    required
+                    minlength="2"
+                    maxlength="30"
+                    pattern="^[A-Za-zА-Яа-яЁё\- ]+$"
+                />
+                <p class="popup__error popup__place-name-error"></p>
+                <input
+                    type="url"
+                    name="link"
+                    class="popup__input popup__input_type_url"
+                    placeholder="Ссылка на картинку"
+                    required
+                />
+                <p class="popup__error popup__link-error"></p>
+                <button type="submit" class="button popup__button">
+                    Сохранить
+                </button>
+            </form>
         </div>
-      </div>
+    </div>
 
       <div class="popup popup_is-animated popup_type_image">
         <div class="popup__content popup__content_content_image">

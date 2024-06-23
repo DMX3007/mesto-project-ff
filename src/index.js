@@ -74,10 +74,8 @@ function addModalOpenerListener(button, popup) {
     openModal(popup);
     initializeValidation();
     if (popup === popupEditProfile) {
-      // Assuming the input fields have IDs `profile-name-input` and `profile-description-input`
       const nameInput = popup.querySelector(".popup__input_type_name");
       const descriptionInput = popup.querySelector(".popup__input_type_description");
-      // Set the value of the input fields to the current values
       nameInput.value = profileTitle.textContent;
       descriptionInput.value = profileDesctiption.textContent;
     }
