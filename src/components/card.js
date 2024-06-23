@@ -32,12 +32,16 @@ export const createCard = (
     .addEventListener("click", likeCardFn);
 
   cardElement
+    .querySelector(".card__likes")
+    .textContent = cardContent.likes.length;
+
+  cardElement
     .querySelector(".card__image")
     .addEventListener("click", clickCardFn);
 
   cardElement
     .querySelector(".card__description")
     .querySelector(".card__title").textContent = cardContent.name;
-
-  return cardElement;
+  
+    return cardElement;
 };

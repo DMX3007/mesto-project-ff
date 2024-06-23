@@ -18,3 +18,12 @@
 .card__like-button:hover {
   opacity: 0.6;
 }
+
+.card__likes-wrapper {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: repeat(2, 10px);
+  gap: 10px;
+  justify-items: center;
+  align-items: center;
+}
