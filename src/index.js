@@ -10,6 +10,7 @@ import {
   checkAllFormValidity,
 } from "./components/validation";
 import "../pages/index.css";
+import {getUserData, getCards} from './components/api'
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -29,25 +30,13 @@ const profileAvatar = document.querySelector(".profile__image");
 const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
 
-const fetchData = async (endPoint) => {
-  const response = await fetch(
-    `https://nomoreparties.co/v1/cohort-magistr-2/${endPoint}`,
-    {
-      headers: {
-        authorization: "26c1ae51-9801-4bd2-af04-f2b12b773d26",
-      },
-    }
-  );
-  const data = await response.json();
-  return data;
-};
-
 window.addEventListener('load', function() {
   document.body.style.visibility = 'visible';
   document.body.style.opacity = '1';
   document.body.style.transition = 'opacity 0.3s';
 });
 
+const currentUserId = await getUserData(profileTitle, profileDesctiption, profileAvatar);
 function removeFormEventListeners(popup) {
   const form = popup.querySelector(".popup__form");
   if (!form) return; // If there's no form in the popup, exit the function
@@ -91,10 +80,11 @@ function handleImageClick(e) {
   openModal(popupImageBlock);
 }
 
-const renderCard = (template, content) => {
+const renderCard = (template, content, userId) => {
   const card = createCard(
     template,
     content,
+    userId,
     removeCard,
     handleLikeButtonClicked,
     handleImageClick
@@ -121,51 +111,14 @@ addCardForm.addEventListener("submit", (e) => {
   const linkInput = addCardForm.elements.link.value;
 
   initialCards.push({ name: placeInput, link: linkInput });
-  renderCard(cardTemplate, initialCards[0]);
+  renderCard(cardTemplate, initialCards[0], currentUserId);
   addCardForm.reset();
   closeModal(popupNewCard);
 });
 
-const { name, about, avatar } = await fetchData("users/me");
-profileTitle.textContent = name;
-profileDesctiption.textContent = about;
-profileAvatar.src = avatar;
+const initialCards = await getCards();
 
-const initialCards = await fetchData("cards");
-initialCards.forEach((cardContent) => renderCard(cardTemplate, cardContent));
+initialCards.forEach((cardContent) => renderCard(cardTemplate, cardContent, currentUserId));
 addModalOpenerListener(profileEditButton, popupEditProfile);
 addModalOpenerListener(profileAddButton, popupNewCard);
 
-
-// USER DATA
-// const newProfileData = await fetch("https://nomoreparties.co/v1/cohort-magistr-2/users/me",{
-//   method: 'PATCH',
-//   headers: {
-//     authorization: '26c1ae51-9801-4bd2-af04-f2b12b773d26',
-//     'Content-Type': 'application/json'
-//   },
-//   body: JSON.stringify({
-//     name: 'Marie Skłodowska Curie',
-//     about: 'Physicist and Chemist'
-//   })
-// });
-
-
-/// POST
-// const userCreds = await newProfileData.json();
-// console.log(userCreds)
-
-// const sendNewCard = await fetch('https://nomoreparties.co/v1/cohort-magistr-2/cards', {
-//   method: 'POST',
-//   headers: {
-//     authorization: '26c1ae51-9801-4bd2-af04-f2b12b773d26',
-//     'Content-Type': 'application/json'
-//   },
-//   body: JSON.stringify({
-//     name: 'Marie Skłodowska Curie',
-//     link: 'https://m.media-amazon.com/images/I/6155G1542kL._AC_.jpg'
-//   })
-// })
-
-// const card = await sendNewCard.json();
-// console.log(card)

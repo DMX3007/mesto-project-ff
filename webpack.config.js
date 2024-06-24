@@ -3,6 +3,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { DefinePlugin } = require("webpack");
+require('dotenv').config();  // This loads the .env file contents into process.env
 
 module.exports = {
   mode: "development",
@@ -53,5 +54,8 @@ module.exports = {
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin(),
+    new DefinePlugin({
+        'process.env.API_TOKEN': JSON.stringify(process.env.API_TOKEN)
+    })
   ],
 };

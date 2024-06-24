@@ -1,5 +1,8 @@
-export const removeCard = (card) => {
+import { deleteCard } from "./api";
+
+export const removeCard = async (card, id) => {
   card.remove();
+  await deleteCard(id);
 };
 
 export function handleLikeButtonClicked(e) {
@@ -9,6 +12,7 @@ export function handleLikeButtonClicked(e) {
 export const createCard = (
   template,
   cardContent,
+  userId,
   removeCardFn,
   likeCardFn,
   clickCardFn
@@ -23,17 +27,17 @@ export const createCard = (
     .querySelector(".card__image")
     .setAttribute("alt", cardContent.name);
 
-  cardElement
-    .querySelector(".card__delete-button")
-    .addEventListener("click", () => removeCardFn(cardElement));
+  if (cardContent.owner._id === userId) {
+    cardElement
+      .querySelector(".card__delete-button")
+      .addEventListener("click", () => removeCardFn(cardElement, cardContent._id));
+  } else {
+    cardElement.querySelector(".card__delete-button").remove();
+  }
 
   cardElement
     .querySelector(".card__like-button")
     .addEventListener("click", likeCardFn);
-
-  cardElement
-    .querySelector(".card__likes")
-    .textContent = cardContent.likes.length;
 
   cardElement
     .querySelector(".card__image")
@@ -42,6 +46,6 @@ export const createCard = (
   cardElement
     .querySelector(".card__description")
     .querySelector(".card__title").textContent = cardContent.name;
-  
-    return cardElement;
+
+  return cardElement;
 };
