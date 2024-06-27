@@ -1,4 +1,3 @@
-
 class Fetcher {
     /**
   * @param {string} baseUrl 
@@ -29,6 +28,7 @@ class Fetcher {
       method: "POST",
       headers: {
         authorization: this.token,
+        "Content-type": 'application/json',
       },
       body: JSON.stringify(body)
     })
@@ -56,6 +56,14 @@ class Fetcher {
         authorization: this.token
       },
       body: JSON.stringify(body),
+    })
+  }
+  async put(url) {
+    fetch(this.baseUrl + url, {
+      method: 'PUT', 
+      header: {
+        authorization: this.token
+      },
     })
   }
 }

@@ -10,7 +10,7 @@ import {
   checkAllFormValidity,
 } from "./components/validation";
 import "../pages/index.css";
-import {getUserData, getCards} from './components/api'
+import {getUserData, getCards, sendCard} from './components/api'
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -105,12 +105,12 @@ function handleProfileFormSubmit(e) {
 }
 profileForm.addEventListener("submit", handleProfileFormSubmit);
 
-addCardForm.addEventListener("submit", (e) => {
+addCardForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const placeInput = addCardForm.elements[`place-name`].value;
   const linkInput = addCardForm.elements.link.value;
-
   initialCards.push({ name: placeInput, link: linkInput });
+  await sendCard({name: placeInput, link: linkInput});
   renderCard(cardTemplate, initialCards[0], currentUserId);
   addCardForm.reset();
   closeModal(popupNewCard);

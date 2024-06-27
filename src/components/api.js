@@ -20,6 +20,11 @@ export const deleteCard = async (cardId) => {
   return await res.json();
 }
 
+export const sendCard = async (cardBody) => {
+  const res = await fetcher.post(`cards`, cardBody);
+  return await res.json();
+}
+
 // USER DATA
 // const newProfileData = await fetch("https://nomoreparties.co/v1/cohort-magistr-2/users/me",{
 //   method: 'PATCH',

@@ -47,5 +47,7 @@ export const createCard = (
     .querySelector(".card__description")
     .querySelector(".card__title").textContent = cardContent.name;
 
+  cardElement.querySelector(".card__likes").textContent = cardContent.likes.length;
+
   return cardElement;
 };
