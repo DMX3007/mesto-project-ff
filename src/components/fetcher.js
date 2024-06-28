@@ -50,16 +50,17 @@ class Fetcher {
  * @param {object} body 
  */
   async patch(url, body) {
-    fetch(this.baseUrl + url, {
+    return await fetch(this.baseUrl + url, {
       method: "PATCH", 
       headers: {
-        authorization: this.token
+        authorization: this.token,
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(body),
     })
   }
   async put(url) {
-    fetch(this.baseUrl + url, {
+    return await fetch(this.baseUrl + url, {
       method: 'PUT', 
       header: {
         authorization: this.token

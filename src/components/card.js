@@ -1,4 +1,4 @@
-import { deleteCard } from "./api";
+import { deleteCard, updateLike } from "./api";
 
 export const removeCard = async (card, id) => {
   card.remove();
@@ -7,6 +7,7 @@ export const removeCard = async (card, id) => {
 
 export function handleLikeButtonClicked(e) {
   e.target.classList.toggle("card__like-button_is-active");
+  // updateLike()
 }
 
 export const createCard = (

@@ -25,6 +25,17 @@ export const sendCard = async (cardBody) => {
   return await res.json();
 }
 
+export const updateLike = async (cardId) => {
+  const res = await fetcher.put(`cards/${cardId}`);
+  return await res.json();
+}
+
+export const updateUserCredentials = async (body) => {
+  const res = await fetcher.patch('users/me', body)
+  return await res.json();
+}
+
+
 // USER DATA
 // const newProfileData = await fetch("https://nomoreparties.co/v1/cohort-magistr-2/users/me",{
 //   method: 'PATCH',
@@ -38,22 +49,3 @@ export const sendCard = async (cardBody) => {
 //   })
 // });
 
-
-/// POST
-// const userCreds = await newProfileData.json();
-// console.log(userCreds)
-
-// const sendNewCard = await fetch('https://nomoreparties.co/v1/cohort-magistr-2/cards', {
-//   method: 'POST',
-//   headers: {
-//     authorization: '26c1ae51-9801-4bd2-af04-f2b12b773d26',
-//     'Content-Type': 'application/json'
-//   },
-//   body: JSON.stringify({
-//     name: 'Marie Skłodowska Curie',
-//     link: 'https://m.media-amazon.com/images/I/6155G1542kL._AC_.jpg'
-//   })
-// })
-
-// const card = await sendNewCard.json();
-// console.log(card)

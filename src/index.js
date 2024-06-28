@@ -10,7 +10,7 @@ import {
   checkAllFormValidity,
 } from "./components/validation";
 import "../pages/index.css";
-import {getUserData, getCards, sendCard} from './components/api'
+import {getUserData, getCards, sendCard, updateUserCredentials} from './components/api'
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -99,7 +99,7 @@ function handleProfileFormSubmit(e) {
     profileForm.elements.name.value;
   document.querySelector(".profile__description").textContent =
     profileForm.elements.description.value;
-
+  updateUserCredentials({name: profileForm.elements.name.value, about: profileForm.elements.description.value});
   profileForm.reset();
   closeModal(popupEditProfile);
 }
