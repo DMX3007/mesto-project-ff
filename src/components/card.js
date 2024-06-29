@@ -1,13 +1,21 @@
-import { deleteCard, updateLike } from "./api";
+import { deleteCard, removeLike, addLike } from "./api";
 
 export const removeCard = async (card, id) => {
   card.remove();
   await deleteCard(id);
 };
 
-export function handleLikeButtonClicked(e) {
-  e.target.classList.toggle("card__like-button_is-active");
-  // updateLike()
+export async function handleLikeButtonClicked(e, cardId) {
+  const isLiked = e.target.classList.toggle("card__like-button_is-active");
+  const likesCounter = e.target.nextSibling.nextSibling;
+  
+  if (isLiked) {
+    const response = await addLike(cardId)
+    likesCounter.textContent = response.likes.length;
+  } else {
+    const response = await removeLike(cardId);
+    likesCounter.textContent = response.likes.length;
+  }
 }
 
 export const createCard = (
@@ -38,7 +46,7 @@ export const createCard = (
 
   cardElement
     .querySelector(".card__like-button")
-    .addEventListener("click", likeCardFn);
+    .addEventListener("click",(e) => likeCardFn(e, cardContent._id));
 
   cardElement
     .querySelector(".card__image")
@@ -47,7 +55,7 @@ export const createCard = (
   cardElement
     .querySelector(".card__description")
     .querySelector(".card__title").textContent = cardContent.name;
-
+    
   cardElement.querySelector(".card__likes").textContent = cardContent.likes.length;
 
   return cardElement;

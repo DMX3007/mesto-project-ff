@@ -25,8 +25,12 @@ export const sendCard = async (cardBody) => {
   return await res.json();
 }
 
-export const updateLike = async (cardId) => {
-  const res = await fetcher.put(`cards/${cardId}`);
+export const addLike = async (cardId) => {
+  const res = await fetcher.put(`cards/likes/${cardId}`);
+  return await res.json();
+}
+export const removeLike = async (cardId) => {
+  const res = await fetcher.delete(`cards/likes/${cardId}`);
   return await res.json();
 }
 

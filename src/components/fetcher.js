@@ -62,8 +62,8 @@ class Fetcher {
   async put(url) {
     return await fetch(this.baseUrl + url, {
       method: 'PUT', 
-      header: {
-        authorization: this.token
+      headers: {
+        authorization: this.token,
       },
     })
   }
