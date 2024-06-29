@@ -8,7 +8,7 @@ export const removeCard = async (card, id) => {
 export async function handleLikeButtonClicked(e, cardId) {
   const isLiked = e.target.classList.toggle("card__like-button_is-active");
   const likesCounter = e.target.nextSibling.nextSibling;
-  
+
   if (isLiked) {
     const response = await addLike(cardId)
     likesCounter.textContent = response.likes.length;
@@ -43,10 +43,13 @@ export const createCard = (
   } else {
     cardElement.querySelector(".card__delete-button").remove();
   }
-
-  cardElement
-    .querySelector(".card__like-button")
-    .addEventListener("click",(e) => likeCardFn(e, cardContent._id));
+  // Show ours old likes
+  const likeButton = cardElement.querySelector(".card__like-button");
+  if (cardContent.likes.some(like => like._id === userId)) {
+    likeButton.classList.toggle('card__like-button_is-active');
+  }
+  
+  likeButton.addEventListener("click",(e) => likeCardFn(e, cardContent._id));
 
   cardElement
     .querySelector(".card__image")
@@ -56,6 +59,7 @@ export const createCard = (
     .querySelector(".card__description")
     .querySelector(".card__title").textContent = cardContent.name;
     
+  cardElement.querySelector(".card__likes").textContent = cardContent.likes.length;
   cardElement.querySelector(".card__likes").textContent = cardContent.likes.length;
 
   return cardElement;
