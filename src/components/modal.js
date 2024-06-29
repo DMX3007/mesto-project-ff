@@ -1,6 +1,7 @@
 import { checkAllFormValidity, clearValidationErrors} from './validation';
 
 export const openModal = (domElement) => {
+  console.log(domElement)
   clearValidationErrors(domElement);
   domElement.classList.add("popup_is-opened");
   

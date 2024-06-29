@@ -18,6 +18,7 @@ const cardsList = document.querySelector(".places__list");
 const popupEditProfile = document.querySelector(".popup_type_edit");
 const popupNewCard = document.querySelector(".popup_type_new-card");
 const popupImageBlock = document.querySelector(".popup_type_image");
+const popupAvatarBlock = document.querySelector(".popup_type_edit_avatar");
 
 const popupCloseButtons = document.querySelectorAll(".popup__close");
 
@@ -27,6 +28,7 @@ const profileAddButton = document.querySelector(".profile__add-button");
 const profileTitle = document.querySelector(".profile__title");
 const profileDesctiption = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
+const profileAvatarClickable = document.querySelector(".profile__image-backdrop");
 const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
 
@@ -58,8 +60,8 @@ popupCloseButtons.forEach((button) => {
   button.addEventListener("click", handleCloseButtonPressed);
 });
 
-function addModalOpenerListener(button, popup) {
-  button.addEventListener("click", (e) => {
+function addModalOpenerListener(element, popup) {
+  element.addEventListener("click", (e) => {
     openModal(popup);
     initializeValidation();
     if (popup === popupEditProfile) {
@@ -121,4 +123,4 @@ const initialCards = await getCards();
 initialCards.forEach((cardContent) => renderCard(cardTemplate, cardContent, currentUserId));
 addModalOpenerListener(profileEditButton, popupEditProfile);
 addModalOpenerListener(profileAddButton, popupNewCard);
-
+addModalOpenerListener(profileAvatarClickable, popupAvatarBlock);
