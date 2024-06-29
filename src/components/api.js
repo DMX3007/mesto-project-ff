@@ -39,6 +39,10 @@ export const updateUserCredentials = async (body) => {
   return await res.json();
 }
 
+export const changeAvatart = async (body) => {
+  const res = await fetcher.patch('users/me/avatar', body)
+  return await res.json();
+}
 
 // USER DATA
 // const newProfileData = await fetch("https://nomoreparties.co/v1/cohort-magistr-2/users/me",{
