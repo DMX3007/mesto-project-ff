@@ -10,7 +10,14 @@ import {
   checkAllFormValidity,
 } from "./components/validation";
 import "../pages/index.css";
-import {getUserData, getCards, sendCard, updateUserCredentials} from './components/api'
+import {
+  getUserData,
+  getCards,
+  sendCard,
+  updateUserCredentials,
+  changeAvatar,
+  isUrl,
+} from "./components/api";
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -28,17 +35,24 @@ const profileAddButton = document.querySelector(".profile__add-button");
 const profileTitle = document.querySelector(".profile__title");
 const profileDesctiption = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
-const profileAvatarClickable = document.querySelector(".profile__image-backdrop");
+const profileAvatarClickable = document.querySelector(
+  ".profile__image-backdrop"
+);
 const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
+const avatarForm = document.forms["edit-avatar"];
 
-window.addEventListener('load', function() {
-  document.body.style.visibility = 'visible';
-  document.body.style.opacity = '1';
-  document.body.style.transition = 'opacity 0.3s';
+window.addEventListener("load", function () {
+  document.body.style.visibility = "visible";
+  document.body.style.opacity = "1";
+  document.body.style.transition = "opacity 0.3s";
 });
 
-const currentUserId = await getUserData(profileTitle, profileDesctiption, profileAvatar);
+const currentUserId = await getUserData(
+  profileTitle,
+  profileDesctiption,
+  profileAvatar
+);
 function removeFormEventListeners(popup) {
   const form = popup.querySelector(".popup__form");
   if (!form) return; // If there's no form in the popup, exit the function
@@ -66,7 +80,9 @@ function addModalOpenerListener(element, popup) {
     initializeValidation();
     if (popup === popupEditProfile) {
       const nameInput = popup.querySelector(".popup__input_type_name");
-      const descriptionInput = popup.querySelector(".popup__input_type_description");
+      const descriptionInput = popup.querySelector(
+        ".popup__input_type_description"
+      );
       nameInput.value = profileTitle.textContent;
       descriptionInput.value = profileDesctiption.textContent;
     }
@@ -81,6 +97,23 @@ function handleImageClick(e) {
     e.target.getAttribute("alt");
   openModal(popupImageBlock);
 }
+
+async function handleAvatarChange(e) {
+  e.preventDefault();
+  const avatarUrl = e.target.elements["link"].value;
+  const submitButton = avatarForm.elements[1];
+  submitButton.textContent = "Сохранение...";
+  const res = await changeAvatar({ avatar: avatarUrl });
+  if (!res.ok) {
+    throw new Error("Failed to update avatar");
+  }
+  const updatedUser = await res.json();
+  const avatar = document.querySelector(".profile__image");
+  avatar.setAttribute("src", updatedUser.avatar);
+  submitButton.textContent = 'Сохранить';
+}
+
+avatarForm.addEventListener("submit", handleAvatarChange);
 
 const renderCard = (template, content, userId) => {
   const card = createCard(
@@ -101,7 +134,10 @@ function handleProfileFormSubmit(e) {
     profileForm.elements.name.value;
   document.querySelector(".profile__description").textContent =
     profileForm.elements.description.value;
-  updateUserCredentials({name: profileForm.elements.name.value, about: profileForm.elements.description.value});
+  updateUserCredentials({
+    name: profileForm.elements.name.value,
+    about: profileForm.elements.description.value,
+  });
   profileForm.reset();
   closeModal(popupEditProfile);
 }
@@ -112,7 +148,7 @@ addCardForm.addEventListener("submit", async (e) => {
   const placeInput = addCardForm.elements[`place-name`].value;
   const linkInput = addCardForm.elements.link.value;
   initialCards.push({ name: placeInput, link: linkInput });
-  await sendCard({name: placeInput, link: linkInput});
+  await sendCard({ name: placeInput, link: linkInput });
   renderCard(cardTemplate, initialCards[0], currentUserId);
   addCardForm.reset();
   closeModal(popupNewCard);
@@ -120,7 +156,9 @@ addCardForm.addEventListener("submit", async (e) => {
 
 const initialCards = await getCards();
 
-initialCards.forEach((cardContent) => renderCard(cardTemplate, cardContent, currentUserId));
+initialCards.forEach((cardContent) =>
+  renderCard(cardTemplate, cardContent, currentUserId)
+);
 addModalOpenerListener(profileEditButton, popupEditProfile);
 addModalOpenerListener(profileAddButton, popupNewCard);
 addModalOpenerListener(profileAvatarClickable, popupAvatarBlock);

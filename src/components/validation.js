@@ -30,6 +30,9 @@ function hideErrorMessage(input) {
 }
 
 export function checkAllFormValidity(inputs, submitButton) {
+  if (inputs.length === 0 && !submitButton) {
+    return
+  }
   if (inputs.every((input) => 
     input.validity.valid === true
   )) {
