@@ -3,7 +3,7 @@ import {
   createCard,
   handleLikeButtonClicked,
 } from "./components/card";
-import { openModal, closeModal, handleEscPressed } from "./components/modal";
+import { openModal, closeModal } from "./components/modal";
 import {
   initializeValidation,
   validateInput,
@@ -16,7 +16,6 @@ import {
   sendCard,
   updateUserCredentials,
   changeAvatar,
-  isUrl,
 } from "./components/api";
 
 const cardTemplate = document.querySelector("#card-template").content;
@@ -147,9 +146,12 @@ addCardForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const placeInput = addCardForm.elements[`place-name`].value;
   const linkInput = addCardForm.elements.link.value;
-  initialCards.push({ name: placeInput, link: linkInput });
   await sendCard({ name: placeInput, link: linkInput });
-  renderCard(cardTemplate, initialCards[0], currentUserId);
+  const updatedCards = await getCards();
+  cardsList.innerHTML = ''; 
+  updatedCards.forEach((cardContent) => 
+    renderCard(cardTemplate, cardContent, currentUserId)
+  )
   addCardForm.reset();
   closeModal(popupNewCard);
 });
