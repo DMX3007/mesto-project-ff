@@ -1,7 +1,8 @@
 {
   "scripts": {
     "build": "rm -rf dist && webpack",
-    "dev": "webpack serve"
+    "dev": "webpack serve",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
     "@babel/core": "^7.23.6",

@@ -1,72 +1,76 @@
 class Fetcher {
-    /**
-  * @param {string} baseUrl 
+  /**
+  * @param {string} baseUrl
   * @param {string} token
   */
   constructor(baseUrl, token) {
     this.baseUrl = baseUrl;
     this.token = token;
-  } 
+  }
+
   /**
-  * @param {string} url 
+  * @param {string} url
   */
   async get(url) {
     const res = await fetch(this.baseUrl + url, {
-      method: "GET",
+      method: 'GET',
       headers: {
         authorization: this.token,
       },
-    })
+    });
     return await res.json();
   }
+
   /**
- * @param {string} url 
- * @param {object} body 
+ * @param {string} url
+ * @param {object} body
  */
   async post(url, body) {
-  return await fetch(this.baseUrl + url, {
-      method: "POST",
+    return await fetch(this.baseUrl + url, {
+      method: 'POST',
       headers: {
         authorization: this.token,
-        "Content-type": 'application/json',
+        'Content-type': 'application/json',
       },
-      body: JSON.stringify(body)
-    })
+      body: JSON.stringify(body),
+    });
   }
-    /**
- * @param {string} url 
+
+  /**
+ * @param {string} url
  */
   async delete(url) {
     return await fetch(this.baseUrl + url, {
-      method: "DELETE", 
+      method: 'DELETE',
       headers: {
-        authorization: this.token
-      }
-    })
+        authorization: this.token,
+      },
+    });
   }
 
   /**
- * @param {string} url 
- * @param {object} body 
+ * @param {string} url
+ * @param {object} body
  */
   async patch(url, body) {
     return await fetch(this.baseUrl + url, {
-      method: "PATCH", 
+      method: 'PATCH',
       headers: {
         authorization: this.token,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(body),
-    })
+    });
   }
+
   async put(url) {
     return await fetch(this.baseUrl + url, {
-      method: 'PUT', 
+      method: 'PUT',
       headers: {
         authorization: this.token,
       },
-    })
+    });
   }
 }
 
-export {Fetcher};
+export { Fetcher };
