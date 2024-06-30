@@ -32,7 +32,7 @@ const profileEditButton = document.querySelector(".profile__edit-button");
 const profileAddButton = document.querySelector(".profile__add-button");
 
 const profileTitle = document.querySelector(".profile__title");
-const profileDesctiption = document.querySelector(".profile__description");
+const profileDescription = document.querySelector(".profile__description");
 const profileAvatar = document.querySelector(".profile__image");
 const profileAvatarClickable = document.querySelector(
   ".profile__image-backdrop"
@@ -49,9 +49,12 @@ window.addEventListener("load", function () {
 
 const currentUserId = await getUserData(
   profileTitle,
-  profileDesctiption,
+  profileDescription,
   profileAvatar
 );
+function loading(button, text) {
+  button.textContent = text;
+}
 function removeFormEventListeners(popup) {
   const form = popup.querySelector(".popup__form");
   if (!form) return; // If there's no form in the popup, exit the function
@@ -83,7 +86,7 @@ function addModalOpenerListener(element, popup) {
         ".popup__input_type_description"
       );
       nameInput.value = profileTitle.textContent;
-      descriptionInput.value = profileDesctiption.textContent;
+      descriptionInput.value = profileDescription.textContent;
     }
   });
 }
@@ -100,8 +103,8 @@ function handleImageClick(e) {
 async function handleAvatarChange(e) {
   e.preventDefault();
   const avatarUrl = e.target.elements["link"].value;
-  const submitButton = avatarForm.elements[1];
-  submitButton.textContent = "Сохранение...";
+  const submitButton = avatarForm.elements[`save`];
+  loading(submitButton, "Сохранение...")
   const res = await changeAvatar({ avatar: avatarUrl });
   if (!res.ok) {
     throw new Error("Failed to update avatar");
@@ -109,7 +112,8 @@ async function handleAvatarChange(e) {
   const updatedUser = await res.json();
   const avatar = document.querySelector(".profile__image");
   avatar.setAttribute("src", updatedUser.avatar);
-  submitButton.textContent = 'Сохранить';
+  loading(submitButton,'Сохранить')
+  closeModal(popupAvatarBlock)
 }
 
 avatarForm.addEventListener("submit", handleAvatarChange);
@@ -125,30 +129,39 @@ const renderCard = (template, content, userId) => {
   );
   cardsList.append(card);
 };
+console.log();
 
-function handleProfileFormSubmit(e) {
+async function handleProfileFormSubmit(e) {
   e.preventDefault();
-
-  document.querySelector(".profile__title").textContent =
+  
+  const saveButton = profileForm.elements[`save`] 
+    loading(saveButton, 'Сохранение...')
+    profileTitle.textContent =
     profileForm.elements.name.value;
-  document.querySelector(".profile__description").textContent =
+  profileDescription.textContent =
     profileForm.elements.description.value;
-  updateUserCredentials({
+  await updateUserCredentials({
     name: profileForm.elements.name.value,
     about: profileForm.elements.description.value,
   });
+  loading(saveButton, 'Сохранить')
   profileForm.reset();
+  profileForm.elements[2].textContent = 'Сохранить'
   closeModal(popupEditProfile);
 }
 profileForm.addEventListener("submit", handleProfileFormSubmit);
 
+
 addCardForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  const saveButton = addCardForm.elements[`save`];
+  loading(saveButton, 'Сохранение...')
   const placeInput = addCardForm.elements[`place-name`].value;
   const linkInput = addCardForm.elements.link.value;
   await sendCard({ name: placeInput, link: linkInput });
   const updatedCards = await getCards();
   cardsList.innerHTML = ''; 
+  loading(saveButton, 'Сохранить');
   updatedCards.forEach((cardContent) => 
     renderCard(cardTemplate, cardContent, currentUserId)
   )
