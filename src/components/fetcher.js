@@ -18,7 +18,6 @@ class Fetcher {
         authorization: this.token,
       },
     });
-    console.log(res)
     return res;
   }
 

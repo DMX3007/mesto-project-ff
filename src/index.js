@@ -1,22 +1,22 @@
+import "../pages/index.css"
 import {
-  removeCard,
-  createCard,
-  handleLikeButtonClicked,
-} from "./components/card";
-import { openModal, closeModal } from "./components/modal";
-import {
-  initializeValidation,
-  validateInput,
-  checkAllFormValidity,
-} from "./components/validation";
-import "../pages/index.css";
-import {
-  getUserData,
+  changeAvatar,
   getCards,
+  getUserData,
   sendCard,
   updateUserCredentials,
-  changeAvatar,
-} from "./components/api";
+} from "./components/api"
+import {
+  createCard,
+  handleLikeButtonClicked,
+  removeCard,
+} from "./components/card"
+import { closeModal, openModal } from "./components/modal"
+import {
+  checkAllFormValidity,
+  initializeValidation,
+  validateInput,
+} from "./components/validation"
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -47,11 +47,18 @@ window.addEventListener("load", function () {
   document.body.style.transition = "opacity 0.3s";
 });
 
-const currentUserId = await getUserData(
-  profileTitle,
-  profileDescription,
-  profileAvatar
-);
+let currentUserId = undefined;
+
+try {
+  const {name, avatar, _id, about} = await getUserData();
+  profileTitle.textContent = name;
+  profileDescription.textContent = about;
+  profileAvatar.src = avatar;
+  currentUserId = _id;
+} catch (err) {
+  console.error("Failed to fetch user data:", err);
+}
+
 function loading(button, text) {
   button.textContent = text;
 }
