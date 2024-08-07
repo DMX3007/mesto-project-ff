@@ -73,4 +73,5 @@ class Fetcher {
   }
 }
 
-export { Fetcher };
+export { Fetcher }
+

@@ -1,59 +1,60 @@
-export function validateInput() {
-  const isValid = this.validity.valid;
-  if (!isValid) {
-    showErrorMessage(this, this.validationMessage);
-  } else {
-    hideErrorMessage(this);
+export class FormValidator {
+  constructor(form) {
+    this.form = form;
+    this.errorSelector = '.popup__error';
+    // get access to this from validateInput passed as callback
+    this.validateInput = this.validateInput.bind(this);
   }
-}
-
-export function clearValidationErrors(popup) {
-  const errorMessages = popup.querySelectorAll('.popup__error');
-
-  errorMessages.forEach((error) => {
-    error.textContent = '';
-  });
-}
-
-function showErrorMessage(input) {
-  const errorMessage = input.parentNode.querySelector(
-    `.popup__${input.name}-error`,
-  );
-  errorMessage.textContent = input.validationMessage;
-}
-
-function hideErrorMessage(input) {
-  const errorMessage = input.parentNode.querySelector(
-    `.popup__${input.name}-error`,
-  );
-  errorMessage.textContent = '';
-}
-
-export function checkAllFormValidity(inputs, submitButton) {
-  if (inputs.length === 0 && !submitButton) {
-    return;
+  get formIsValid() {
+    return this.form.checkValidity();
   }
-  if (inputs.every((input) => input.validity.valid === true)) {
-    submitButton.disabled = false;
-  } else {
-    submitButton.disabled = true;
+  validate() {
+    this.setSubmitButtonState();
+    const inputs = this.form.querySelectorAll('input');
+    inputs.forEach((input) => {
+      input.addEventListener('input', this.validateInput);
+    });
   }
-}
-export function initializeValidation() {
-  const forms = Array.from(document.querySelectorAll('.popup__form'));
+  
+  validateInput(event) {
+    const input = event.target;
+    const inputIsValid = input.validity.valid;
+    this.toggleShowErrorMessage(input, inputIsValid);
+    this.setSubmitButtonState()
+  }
 
-  const form = forms.filter((form) => form.parentNode.parentNode.classList.contains('popup_is-opened'));
-
-  let submitButton;
-  const inputs = [];
-
-  for (const input of form[0].elements) {
-    if (input.type !== 'submit') {
-      input.addEventListener('input', validateInput);
-      inputs.push(input);
+  toggleShowErrorMessage (input, inputIsValid) {
+    const errorMessage = input.parentNode.querySelector(
+      `.popup__${input.name}-error`,
+    );
+    if (inputIsValid && errorMessage) {
+      errorMessage.textContent = '';
     } else {
-      submitButton = input;
+      errorMessage.textContent = input.validationMessage;
     }
   }
-  form[0].addEventListener('input', () => checkAllFormValidity(inputs, submitButton));
+
+  clearValidationErrors() {
+    const errorMessages = this.form.querySelectorAll(this.errorSelector);
+    errorMessages.forEach((error) => {
+      error.textContent = '';
+    });
+  }
+  
+  checkValidity() {
+    const inputs = this.form.querySelectorAll('input');
+    if  (inputs.length === 0) {
+      return true;
+    }
+    return inputs.every((input) => input.validity.valid === true);
+  }
+
+  setSubmitButtonState() {
+    const submitButton = this.form.querySelector('button[type="submit"]');
+    if (this.formIsValid) {
+      submitButton.disabled = false;
+    } else {
+      submitButton.disabled = true;
+    }
+  }
 }

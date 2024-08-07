@@ -4,7 +4,7 @@ import {
   getCards,
   getUserData,
   sendCard,
-  updateUserCredentials,
+  updateUserCredentials
 } from "./components/api"
 import {
   createCard,
@@ -12,11 +12,7 @@ import {
   removeCard,
 } from "./components/card"
 import { closeModal, openModal } from "./components/modal"
-import {
-  checkAllFormValidity,
-  initializeValidation,
-  validateInput,
-} from "./components/validation"
+import { FormValidator } from './components/validation'
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -40,6 +36,7 @@ const profileAvatarClickable = document.querySelector(
 const addCardForm = document.forms["new-place"];
 const profileForm = document.forms["edit-profile"];
 const avatarForm = document.forms["edit-avatar"];
+let currentUserId = undefined;
 
 window.addEventListener("load", function () {
   document.body.style.visibility = "visible";
@@ -47,56 +44,39 @@ window.addEventListener("load", function () {
   document.body.style.transition = "opacity 0.3s";
 });
 
-let currentUserId = undefined;
+const cardValidator = new FormValidator(addCardForm);
+const profileValidator = new FormValidator(profileForm);
+const avatarValidator = new FormValidator(avatarForm);
 
-try {
-  const {name, avatar, _id, about} = await getUserData();
-  profileTitle.textContent = name;
-  profileDescription.textContent = about;
-  profileAvatar.src = avatar;
-  currentUserId = _id;
-} catch (err) {
-  console.error("Failed to fetch user data:", err);
+cardValidator.validate();
+profileValidator.validate();
+avatarValidator.validate();
+
+const getInfoAll = async () => {
+  try {
+    const {name, avatar, _id, about} = await getUserData();
+    const initialCards = await getCards();
+    profileTitle.textContent = name;
+    profileDescription.textContent = about;
+    profileAvatar.src = avatar;
+    currentUserId = _id;
+    initialCards.forEach((cardContent) =>
+      renderCard(cardTemplate, cardContent, currentUserId)
+    );
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 function loading(button, text) {
   button.textContent = text;
 }
-function removeFormEventListeners(popup) {
-  const form = popup.querySelector(".popup__form");
-  if (!form) return; // If there's no form in the popup, exit the function
-  form.removeEventListener("input", checkAllFormValidity);
 
-  let inputs = Array.from(form.elements).filter(
-    (input) => input.type !== "submit"
-  );
-  inputs.forEach((input) => {
-    input.removeEventListener("input", validateInput);
-  });
-}
-function handleCloseButtonPressed() {
-  const underlay = this.closest(".popup");
-  closeModal(underlay);
-  removeFormEventListeners(underlay);
-}
 popupCloseButtons.forEach((button) => {
-  button.addEventListener("click", handleCloseButtonPressed);
-});
-
-function addModalOpenerListener(element, popup) {
-  element.addEventListener("click", (e) => {
-    openModal(popup);
-    initializeValidation();
-    if (popup === popupEditProfile) {
-      const nameInput = popup.querySelector(".popup__input_type_name");
-      const descriptionInput = popup.querySelector(
-        ".popup__input_type_description"
-      );
-      nameInput.value = profileTitle.textContent;
-      descriptionInput.value = profileDescription.textContent;
-    }
+  button.addEventListener("click", () => {
+    closeModal(button.closest(".popup"));
   });
-}
+});
 
 function handleImageClick(e) {
   const popupImage = document.querySelector(".popup__image");
@@ -112,15 +92,18 @@ async function handleAvatarChange(e) {
   const avatarUrl = e.target.elements["link"].value;
   const submitButton = avatarForm.elements[`save`];
   loading(submitButton, "Сохранение...")
-  const res = await changeAvatar({ avatar: avatarUrl });
-  if (!res.ok) {
-    throw new Error("Failed to update avatar");
+  try {
+    const res = await changeAvatar({ avatar: avatarUrl });
+    const updatedUser = await res.json();
+    const avatar = document.querySelector(".profile__image");
+    avatar.setAttribute("src", updatedUser.avatar);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    loading(submitButton,'Сохранить')
+    closeModal(popupAvatarBlock)
+    avatarValidator.clearValidationErrors()
   }
-  const updatedUser = await res.json();
-  const avatar = document.querySelector(".profile__image");
-  avatar.setAttribute("src", updatedUser.avatar);
-  loading(submitButton,'Сохранить')
-  closeModal(popupAvatarBlock)
 }
 
 avatarForm.addEventListener("submit", handleAvatarChange);
@@ -134,30 +117,33 @@ const renderCard = (template, content, userId) => {
     handleLikeButtonClicked,
     handleImageClick
   );
-  cardsList.append(card);
+  cardsList.prepend(card);
 };
-console.log();
 
 async function handleProfileFormSubmit(e) {
   e.preventDefault();
   
   const saveButton = profileForm.elements[`save`] 
-    loading(saveButton, 'Сохранение...')
-    profileTitle.textContent =
+  loading(saveButton, 'Сохранение...')
+  profileTitle.textContent =
     profileForm.elements.name.value;
   profileDescription.textContent =
     profileForm.elements.description.value;
-  await updateUserCredentials({
-    name: profileForm.elements.name.value,
-    about: profileForm.elements.description.value,
-  });
-  loading(saveButton, 'Сохранить')
-  profileForm.reset();
-  profileForm.elements[2].textContent = 'Сохранить'
-  closeModal(popupEditProfile);
+    try {
+      await updateUserCredentials({
+        name: profileForm.elements.name.value,
+        about: profileForm.elements.description.value,
+      });
+    }catch (err) {
+      console.error(err);
+    } finally {
+      loading(saveButton, 'Сохранить')
+      profileForm.reset();
+      profileValidator.clearValidationErrors()
+      closeModal(popupEditProfile);
+    }
 }
 profileForm.addEventListener("submit", handleProfileFormSubmit);
-
 
 addCardForm.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -165,22 +151,27 @@ addCardForm.addEventListener("submit", async (e) => {
   loading(saveButton, 'Сохранение...')
   const placeInput = addCardForm.elements[`place-name`].value;
   const linkInput = addCardForm.elements.link.value;
-  await sendCard({ name: placeInput, link: linkInput });
-  const updatedCards = await getCards();
-  cardsList.innerHTML = ''; 
-  loading(saveButton, 'Сохранить');
-  updatedCards.forEach((cardContent) => 
-    renderCard(cardTemplate, cardContent, currentUserId)
-  )
-  addCardForm.reset();
-  closeModal(popupNewCard);
+  try {
+    const card = await sendCard({ name: placeInput, link: linkInput });
+    renderCard(cardTemplate, card, currentUserId);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loading(saveButton, 'Сохранить');
+    addCardForm.reset();
+    cardValidator.clearValidationErrors()
+    closeModal(popupNewCard);
+  }
 });
 
-const initialCards = await getCards();
+getInfoAll();
 
-initialCards.forEach((cardContent) =>
-  renderCard(cardTemplate, cardContent, currentUserId)
-);
-addModalOpenerListener(profileEditButton, popupEditProfile);
-addModalOpenerListener(profileAddButton, popupNewCard);
-addModalOpenerListener(profileAvatarClickable, popupAvatarBlock);
+profileEditButton.addEventListener("click", () => {
+  openModal(popupEditProfile);
+});
+profileAddButton.addEventListener("click", () => {
+  openModal(popupNewCard);
+});
+profileAvatarClickable.addEventListener("click", () => {
+  openModal(popupAvatarBlock);
+});

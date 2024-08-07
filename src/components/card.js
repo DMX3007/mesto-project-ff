@@ -1,21 +1,28 @@
-import { deleteCard, removeLike, addLike } from './api';
+import { addLike, deleteCard, removeLike } from './api'
 
 export const removeCard = async (card, id) => {
-  card.remove();
-  await deleteCard(id);
+  try {
+      await deleteCard(id);
+      card.remove();
+  } catch (error) {
+      console.error('Failed to delete card:', error);
+  }
 };
 
 export async function handleLikeButtonClicked(e, cardId) {
   const isLiked = e.target.classList.toggle('card__like-button_is-active');
   const likesCounter = e.target.nextSibling.nextSibling;
-
-  if (isLiked) {
-    const response = await addLike(cardId);
-    likesCounter.textContent = response.likes.length;
-  } else {
-    const response = await removeLike(cardId);
-    likesCounter.textContent = response.likes.length;
-  }
+  try {
+    if (isLiked) {
+      const response = await addLike(cardId);
+      likesCounter.textContent = response.likes.length;
+    } else {
+      const response = await removeLike(cardId);
+      likesCounter.textContent = response.likes.length;
+    }
+  } catch (err) {
+    console.error('Failed to update likes:', err);
+  } 
 }
 
 export const createCard = (
@@ -59,7 +66,6 @@ export const createCard = (
     .querySelector('.card__description')
     .querySelector('.card__title').textContent = cardContent.name;
 
-  cardElement.querySelector('.card__likes').textContent = cardContent.likes.length;
   cardElement.querySelector('.card__likes').textContent = cardContent.likes.length;
 
   return cardElement;
