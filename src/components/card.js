@@ -10,15 +10,17 @@ export const removeCard = async (card, id) => {
 };
 
 export async function handleLikeButtonClicked(e, cardId) {
-  const isLiked = e.target.classList.toggle('card__like-button_is-active');
   const likesCounter = e.target.nextSibling.nextSibling;
+  const isLiked = e.target.classList.contains("card__like-button_is-active");
   try {
-    if (isLiked) {
+    if (!isLiked) {
       const response = await addLike(cardId);
       likesCounter.textContent = response.likes.length;
+      e.target.classList.toggle('card__like-button_is-active');
     } else {
       const response = await removeLike(cardId);
       likesCounter.textContent = response.likes.length;
+      e.target.classList.toggle('card__like-button_is-active');
     }
   } catch (err) {
     console.error('Failed to update likes:', err);

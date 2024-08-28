@@ -1,9 +1,9 @@
 export const openModal = (domElement) => {
   domElement.classList.add('popup_is-opened');
-  domElement.addEventListener('click', (e) => {
-    // close on outer modal click
-    if (e.target === domElement) closeModal(domElement);
-  });
+  // domElement.addEventListener('click', (e) => {
+  //   // close on outer modal click
+  //   if (e.target === domElement) closeModal(domElement);
+  // });
   document.addEventListener('keydown', handleEscPressed);
 };
 

@@ -5,7 +5,7 @@ export class FormValidator {
     // get access to this from validateInput passed as callback
     this.validateInput = this.validateInput.bind(this);
   }
-  get formIsValid() {
+  get formIsValid() { 
     return this.form.checkValidity();
   }
   validate() {

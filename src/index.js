@@ -1,18 +1,18 @@
-import "../pages/index.css"
+import "../pages/index.css";
 import {
   changeAvatar,
   getCards,
   getUserData,
   sendCard,
   updateUserCredentials
-} from "./components/api"
+} from "./components/api";
 import {
   createCard,
   handleLikeButtonClicked,
   removeCard,
-} from "./components/card"
-import { closeModal, openModal } from "./components/modal"
-import { FormValidator } from './components/validation'
+} from "./components/card";
+import { closeModal, openModal } from "./components/modal";
+import { FormValidator } from './components/validation';
 
 const cardTemplate = document.querySelector("#card-template").content;
 const cardsList = document.querySelector(".places__list");
@@ -66,7 +66,7 @@ const getInfoAll = async () => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 function loading(button, text) {
   button.textContent = text;
@@ -91,18 +91,16 @@ async function handleAvatarChange(e) {
   e.preventDefault();
   const avatarUrl = e.target.elements["link"].value;
   const submitButton = avatarForm.elements[`save`];
-  loading(submitButton, "Сохранение...")
+  loading(submitButton, "Сохранение...");
   try {
     const res = await changeAvatar({ avatar: avatarUrl });
     const updatedUser = await res.json();
-    const avatar = document.querySelector(".profile__image");
-    avatar.setAttribute("src", updatedUser.avatar);
+    profileAvatar.src = updatedUser.avatar;
+    closeModal(popupAvatarBlock);
   } catch (error) {
     console.error(error);
   } finally {
-    loading(submitButton,'Сохранить')
-    closeModal(popupAvatarBlock)
-    avatarValidator.clearValidationErrors()
+    loading(submitButton,'Сохранить');
   }
 }
 
@@ -122,56 +120,65 @@ const renderCard = (template, content, userId) => {
 
 async function handleProfileFormSubmit(e) {
   e.preventDefault();
+
+  const saveButton = profileForm.elements[`save`];
+  loading(saveButton, 'Сохранение...');
   
-  const saveButton = profileForm.elements[`save`] 
-  loading(saveButton, 'Сохранение...')
-  profileTitle.textContent =
-    profileForm.elements.name.value;
-  profileDescription.textContent =
-    profileForm.elements.description.value;
-    try {
-      await updateUserCredentials({
-        name: profileForm.elements.name.value,
-        about: profileForm.elements.description.value,
-      });
-    }catch (err) {
-      console.error(err);
-    } finally {
-      loading(saveButton, 'Сохранить')
-      profileForm.reset();
-      profileValidator.clearValidationErrors()
-      closeModal(popupEditProfile);
-    }
+  try {
+    await updateUserCredentials({
+      name: profileForm.elements.name.value,
+      about: profileForm.elements.description.value,
+    });
+    profileTitle.textContent = profileForm.elements.name.value;
+    profileDescription.textContent = profileForm.elements.description.value;
+    closeModal(popupEditProfile);
+  } catch (err) {
+    console.error(err);
+  } finally {
+    loading(saveButton, 'Сохранить');
+  }
 }
+
 profileForm.addEventListener("submit", handleProfileFormSubmit);
 
 addCardForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const saveButton = addCardForm.elements[`save`];
-  loading(saveButton, 'Сохранение...')
+  loading(saveButton, 'Сохранение...');
   const placeInput = addCardForm.elements[`place-name`].value;
   const linkInput = addCardForm.elements.link.value;
   try {
     const card = await sendCard({ name: placeInput, link: linkInput });
     renderCard(cardTemplate, card, currentUserId);
+    addCardForm.reset();
+    cardValidator.validate();
+    closeModal(popupNewCard);
   } catch (err) {
     console.error(err);
   } finally {
     loading(saveButton, 'Сохранить');
-    addCardForm.reset();
-    cardValidator.clearValidationErrors()
-    closeModal(popupNewCard);
   }
 });
 
 getInfoAll();
 
 profileEditButton.addEventListener("click", () => {
+  profileForm.elements.name.value = profileTitle.textContent;
+  profileForm.elements.description.value = profileDescription.textContent;
+  profileValidator.clearValidationErrors();
   openModal(popupEditProfile);
 });
+
 profileAddButton.addEventListener("click", () => {
   openModal(popupNewCard);
 });
+
 profileAvatarClickable.addEventListener("click", () => {
   openModal(popupAvatarBlock);
+});
+
+document.querySelectorAll('.popup').forEach((popup) => {
+  popup.addEventListener('click', (e) => {
+    if (e.target === popup) closeModal(popup);
+  });
 });
